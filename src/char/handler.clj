@@ -1,17 +1,22 @@
 (ns char.handler
-  (:require [compojure.core :refer [defroutes]]
-            [char.routes.home :refer [home-routes]]
-            [char.middleware :as middleware]
-            [noir.util.middleware :refer [app-handler]]
-            [compojure.route :as route]
-            [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.rotor :as rotor]
-            [selmer.parser :as parser]
-            [environ.core :refer [env]]))
+  (:require
+   [char.middleware                 :as middleware]
+   [char.routes.home                :refer [home-routes]]
+   [compojure.core                  :refer [defroutes ANY]]
+   [compojure.route                 :as route]
+   [environ.core                    :refer [env]]
+   [noir.util.middleware            :refer [app-handler]]
+   [selmer.parser                   :as parser]
+   [taoensso.timbre                 :as timbre]
+   [taoensso.timbre.appenders.rotor :as rotor]
+   )
+  )
+
 
 (defroutes app-routes
   (route/resources "/")
   (route/not-found "Not Found"))
+
 
 (defn init
   "init will be called once when
