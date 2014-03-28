@@ -15,7 +15,7 @@ env:
 #    - _JAVA_OPTIONS='-Xms64m -Xmx128m -XX:+AggressiveOpts'
 
 #install : ./travis/install.sh
-script  : lein clean && lein test
+script  : lein2 clean && lein2 test
 
 matrix:
   fast_finish: true
