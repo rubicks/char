@@ -1,6 +1,4 @@
-(defproject
-  char
-  "0.1.0-SNAPSHOT"
+(defproject char "0.1.0-SNAPSHOT"
   :repl-options
   {:init-ns char.repl}
   :dependencies [
@@ -34,16 +32,14 @@
    :destroy char.handler/destroy}
   :profiles
   {:uberjar {:aot :all},
-   :production
-   {:ring
-    {:open-browser? false, :stacktraces? false, :auto-reload? false}},
-   :dev
-   {:dependencies [[ring-mock "0.1.5"] [ring/ring-devel "1.2.1"]],
-    :env {:dev true}}}
-  :url
-  "http://example.com/FIXME"
-  :plugins
-  [[lein-ring "0.8.10"] [lein-environ "0.4.0"]]
-  :description
-  "FIXME: write description"
-  :min-lein-version "2.0.0")
+   :production {:ring {:open-browser? false,
+                       :stacktraces? false,
+                       :auto-reload? false}},
+   :dev {:dependencies [[ring-mock "0.1.5"]
+                        [ring/ring-devel "1.2.1"]],
+         :env {:dev true}}}
+  :url "http://example.com/FIXME"
+  :plugins [[lein-ring "0.8.10"]
+            [lein-environ "0.4.0"]]
+  :description "the mbta needs some help"
+  :min-lein-version "2.3.4")

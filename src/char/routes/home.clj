@@ -3,13 +3,15 @@
 (ns char.routes.home
   (:use compojure.core)
   (:require
-   [compojure.core    :refer :all]
-   [char.views.layout :as layout]
+   [char.get]
    [char.util         :as util]
-   [liberator.core    :refer [resource defresource]]
+   [char.views.layout :as layout]
    [cheshire.core]
    [clj-http.client   :as client]
    [clojure.data.csv  :as csv]
+   [clojure.pprint    :as pp ]
+   [compojure.core    :refer :all]
+   [liberator.core    :refer [resource defresource]]
    ))
 
 
@@ -36,19 +38,27 @@
   :available-media-types ["application/json"])
 
 
-(defn- -departures []
-  (let [got (client/get "http://developer.mbta.com/lib/gtrtfs/Departures.csv")]
-    (cheshire.core/generate-string
-     (identity (csv/read-csv (:body got))) {:pretty true})
-    )
-  )
+(defn- -jpretty [o] (cheshire.core/generate-string o {:pretty true}))
+
+(defn- -departures-txt []
+  (let [ar (csv/read-csv (:body (char.get/departures)))]
+    (let [ws (util/cwidths ar)]
+      (util/stripose "\n"
+                     (map #(util/stripose " " (map util/fornat %1 %2))
+                          (repeat ws) ar)))))
 
 
 (defresource departures
   :allowed-methods [:get]
-  :handle-ok (-departures)
+  :handle-ok (-jpretty (char.get/departures))
   :etag "fixed-etag"
   :available-media-types ["application/json"]
+  )
+(defresource departures-txt
+  :allowed-methods [:get]
+  :handle-ok (-departures-txt)
+  :etag "fixed-etag"
+  :available-media-types ["text/plain"]
   )
 
 
@@ -58,4 +68,5 @@
   (ANY "/foo" request foo)
   (ANY "/bar" request bar)
   (ANY "/departures" request departures)
+  (ANY "/departures.txt" request departures-txt)
   )
