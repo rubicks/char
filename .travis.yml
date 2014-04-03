@@ -15,7 +15,9 @@ matrix:
     - jdk: oraclejdk8
 deploy:
   provider: heroku
-  app:
-    master: embee
+  app: embee
+  on:
+    branch: master
+    jdk: openjdk7
   api_key:
-    secure: ktmWbXkVPUYJdIGHCPMVQxT6lT6hNUuIR9aAoJTMMbUzn6UkDXlJtUq6sQtC0T7SLuD9Uh07Q9IflzSrtilbTnf/0zw5D4ntPwfBpFJmztQv7/erWepT6k1bxZLqT+fI/xptAGzY61ZNXFoninKFWmSywM301xlqDqt6yNX+rLo=
+    secure: Z7+uaQ/2cVTb7C4EFkZUuulkJFCZI1JucO4nidZW4GYHKPX7hHkngtEuUmBS0z9SHikMvPEPbBjDzHl8Gh+diS0k+osyTf0CNepgV5mAarhR2amgLv8E60/43NZTvIeojNFx8Rs3OxRHULNrAXwHRLDw5Bs3lLg2zp2e/vTEYbo=
