@@ -1,23 +1,21 @@
 language: clojure
-
 lein: lein2
-
 jdk:
   - openjdk6
   - openjdk7
   - oraclejdk7
   - oraclejdk8
-
 env:
   global:
     - PROJECT_DIR=${TRAVIS_BUILD_DIR}
-#    - PATH=${PROJECT_DIR}/bin:${PATH}
-#    - _JAVA_OPTIONS='-Xms64m -Xmx128m -XX:+AggressiveOpts'
-
-#install : ./travis/install.sh
-script  : lein2 clean && lein2 test
-
+script: lein2 clean && lein2 test
 matrix:
   fast_finish: true
   allow_failures:
     - jdk: oraclejdk8
+deploy:
+  provider: heroku
+  app:
+    master: embee
+  api_key:
+    secure: ktmWbXkVPUYJdIGHCPMVQxT6lT6hNUuIR9aAoJTMMbUzn6UkDXlJtUq6sQtC0T7SLuD9Uh07Q9IflzSrtilbTnf/0zw5D4ntPwfBpFJmztQv7/erWepT6k1bxZLqT+fI/xptAGzY61ZNXFoninKFWmSywM301xlqDqt6yNX+rLo=
