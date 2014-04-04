@@ -12,6 +12,7 @@
    [clojure.pprint    :as pp ]
    [compojure.core    :refer :all]
    [liberator.core    :refer [resource defresource]]
+   [noir.response]
    ))
 
 
@@ -48,9 +49,19 @@
                           (repeat ws) ar)))))
 
 
+(defn- -row [o] (cons (Integer/parseInt (first o)) (rest o)))
+
+(defn- -departures []
+  (noir.response/json
+   (util/objectify (csv/read-csv (:body (char.get/departures))))))
+     ;; (let [h (first c)
+     ;;       t (rest c)]
+     ;;   (cons h (map -row t))))))
+
+
 (defresource departures
   :allowed-methods [:get]
-  :handle-ok (-jpretty (char.get/departures))
+  :handle-ok (-departures)
   :etag "fixed-etag"
   :available-media-types ["application/json"]
   )
@@ -67,6 +78,6 @@
   (GET "/about" [] (about-page))
   (ANY "/foo" request foo)
   (ANY "/bar" request bar)
-  (ANY "/departures" request departures)
+  (ANY "/departures" request (-departures))
   (ANY "/departures.txt" request departures-txt)
   )

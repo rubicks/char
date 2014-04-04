@@ -47,9 +47,10 @@
 
 
 
-(def app (app-handler
+(def app (noir.util.middleware/app-handler
            ;; add your application routes here
-           [home-routes app-routes]
+           [home-routes
+            app-routes]
            ;; add custom middleware here
            :middleware [middleware/template-error-page
                         middleware/log-request]

@@ -4,6 +4,7 @@
   :dependencies [
                  [cheshire              "5.3.1"     ]
                  [clj-http              "0.9.0"     ]
+                 [clj-time              "0.6.0"     ]
                  [com.h2database/h2     "1.3.175"   ]
                  [com.taoensso/timbre   "3.0.0"     ]
                  [com.taoensso/tower    "2.0.1"     ]

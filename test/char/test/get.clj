@@ -9,6 +9,7 @@
    [char.util         :as util    ]
    [cheshire.core                 ]
    [clj-http.client   :as client  ]
+   [clj-time.coerce               ]
    [clojure.data.csv  :as csv     ]
    [clojure.data.json :as json    ]
    [clojure.pprint    :as pp      ]
@@ -17,12 +18,26 @@
   )
 
 
-(defn- -os [ar] (map zipmap (repeat (first ar)) (rest ar)))
+(defn- -mmut [m k f] (assoc m k (f (get m k))))
+
+
+;; take string, return Long
+(defn- -parlon [s] (Long/parseLong s))
+
+
+;; take some number of seconds since 1970-01-01T00:00Z, return DateTime
+;; representation
+(defn- -dati [o]
+  (clj-time.coerce/from-long
+   (* 1000
+      (if (number? o) o (Long/parseLong o)))))
 
 
 (deftest format-csv
 
   (let [d (char.get/departures)]
+
+    (is (map? d))
 
     ;; (println)
     ;; (pp/pprint (dissoc d :body))
@@ -37,44 +52,66 @@
 
     (let [body (:body d)]
 
+      (is (string? body))
+
       ;; (pp/pprint
       ;;  (remove #(empty? (get % "Track"))
       ;;          (-os (csv/read-csv body))))
 
-      (let [ar (map rest (csv/read-csv body))]
+      (let [ar (csv/read-csv body)]
+
+        (is (sequential? ar))
+        (is (every? sequential? ar))
+        (is (every? #(every? string? %) ar))
 
         ;; (println (first ar))
 
         (let [ws (util/cwidths ar)]
-
           ;; (println ws)
-
           ;; (pp/pprint (map -fornat [1 1 2 3 5] (repeat "x")))
           (println
            (util/stripose "\n"
                           (map #(util/stripose " " (map util/fornat %1 %2))
                                (repeat ws) ar)))
-          ;; (println)
-          ;; (dorun (map println ar))
-          ;; (println (reduce str (interpose "\n" (map -foo ar))))
+          )
 
-          (let [os (-os ar)
-                w (zipmap (first ar) ws)]
+        (let [epoch 0
+              now (System/currentTimeMillis)]
+          (pp/pprint ["epoch" epoch])
+          (pp/pprint ["now" now])
+          (pp/pprint ["(-dati now)" (clj-time.coerce/from-long now)])
+          (pp/pprint ["(-dati epoch)" (clj-time.coerce/from-long epoch)])
+          (pp/pprint ["(-dati epoch)" (-dati epoch)])
+          )
 
-            ;; (pp/pprint w)
+        (let [os (util/objectify ar)
+              f (fn [s] (->> s
+                             (Long/parseLong)
+                             (* 1000)
+                             (clj-time.coerce/from-long)))]
 
-            ;; ;; (pp/pprint (filter #(= "North Station" (get % "Origin")) os))
-            (pp/pprint (remove #(empty? (get % "Track")) os))
+          (is (sequential? os))
+          (is (every? map? os))
+          ;; (is (every? #(every? string)map? os))
 
-            ;; (dorun (map println (cons (keys (first os)) (map vals os))))
+          ;; ;; (pp/pprint (filter #(= "North Station" (get % "Origin")) os))
+          ;; (pp/pprint (remove #(empty? (get % "Track")) os))
+          ;; (pp/pprint os)
 
-            ;; (println (reduce str (interpose "\n" (map -foo (repeat w) os))))
+          (pp/pprint
+           (->> os
+                (map #(-mmut % "TimeStamp" f))
+                (map #(-mmut % "ScheduledTime" f))
+                ))
 
-            ;; (map (fn [k] (-fornat (get )))
+          ;; (dorun (map println (cons (keys (first os)) (map vals os))))
 
-            ;; (map (fn [w o] (map (-fornat ws o))
+          ;; (println (reduce str (interpose "\n" (map -dati (repeat w) os))))
 
-            )
+          ;; (map (fn [k] (-fornat (get )))
+
+          ;; (map (fn [w o] (map (-fornat ws o))
+
           )
         )
       )

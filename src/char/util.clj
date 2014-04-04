@@ -37,3 +37,10 @@
 
 (defn cwidths [ar] (apply map (partial max) (countr ar)))
 
+
+(defn objectify [ar]
+  (assert (sequential? ar))
+  (assert (every? sequential? ar))
+  (assert (every? #(every? string? %) ar))
+  (map zipmap (repeat (first ar)) (rest ar)))
+
